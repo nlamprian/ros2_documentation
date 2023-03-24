@@ -18,12 +18,17 @@ There are also :doc:`RPM packages <../RHEL-Install-RPMs>` available.
 System Requirements
 -------------------
 
-We currently support RHEL 8 64-bit.
+We currently support RHEL 9 64-bit.
 The Rolling Ridley distribution will change target platforms from time to time as new platforms are selected for development.
 Most people will want to use a stable ROS distribution.
 
+System setup
+------------
+
+.. include:: ../_RHEL-Set-Locale.rst
+
 Enable required repositories
-----------------------------
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 The rosdep database contains packages from the EPEL and PowerTools repositories, which are not enabled by default.
 They can be enabled by running:
@@ -31,21 +36,21 @@ They can be enabled by running:
 .. code-block:: bash
 
    sudo dnf install 'dnf-command(config-manager)' epel-release -y
-   sudo dnf config-manager --set-enabled powertools
+   sudo dnf config-manager --set-enabled crb
 
 .. note:: This step may be slightly different depending on the distribution you are using. Check the EPEL documentation: https://docs.fedoraproject.org/en-US/epel/#_quickstart
 
-Installing prerequisites
-------------------------
+Install prerequisites
+^^^^^^^^^^^^^^^^^^^^^
 
 There are a few packages that must be installed in order to get and unpack the binary release.
 
 .. code-block:: bash
 
-   sudo dnf install tar bzip2 wget -y
+   sudo dnf install tar bzip2 python3-rosdep wget -y
 
-Downloading ROS 2
------------------
+Download ROS 2
+--------------
 
 Binary releases of Rolling Ridley are not provided.
 Instead you may download nightly :ref:`prerelease binaries <Prerelease_binaries>`.
@@ -62,30 +67,19 @@ Instead you may download nightly :ref:`prerelease binaries <Prerelease_binaries>
        cd ~/ros2_{DISTRO}
        tar xf ~/Downloads/ros2-package-linux-x86_64.tar.bz2
 
-Installing and initializing rosdep
-----------------------------------
-
-.. code-block:: bash
-
-       sudo dnf install -y python3-rosdep
-       sudo rosdep init
-       rosdep update
-
-.. _rhel-install-binary-install-missing-dependencies:
-
-Installing the missing dependencies
------------------------------------
+Install dependencies using rosdep
+---------------------------------
 
 .. include:: ../_Dnf-Update-Admonition.rst
 
-Set your rosdistro according to the release you downloaded.
-
 .. code-block:: bash
 
-       rosdep install --from-paths ~/ros2_{DISTRO}/ros2-linux/share --ignore-src -y --skip-keys "asio cyclonedds fastcdr fastrtps ignition-cmake2 ignition-math6 python3-babeltrace python3-mypy rti-connext-dds-6.0.1 urdfdom_headers"
+   sudo rosdep init
+   rosdep update
+   rosdep install --from-paths src --ignore-src -y --skip-keys "assimp fastcdr ignition-cmake2 ignition-math6 python3-matplotlib python3-nose python3-pygraphviz rti-connext-dds-6.0.1 urdfdom_headers"
 
 Install additional DDS implementations (optional)
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+-------------------------------------------------
 
 If you would like to use another DDS or RTPS vendor besides the default, you can find instructions :doc:`here <../DDS-Implementations>`.
 
